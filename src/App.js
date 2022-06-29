@@ -20,14 +20,13 @@ function App(props) {
     }, [])
 
     const {count} = props.product
-
     let page = []
 
     useEffect(() => {
-        if(filteringData === ''){
+        if (filteringData === '') {
             props.getProducts()
-            setPageNum(0)
         }
+        setPageNum(0)
     }, [filteringData])
 
 
@@ -40,26 +39,48 @@ function App(props) {
     }
 
     function changePage(page_num) {
-        if(page_num < 0 || page_num+1 > count/10){}else{
+        if (page_num < 0 || page_num >= count / 10) {
+        } else {
             setPageNum(page_num)
         }
     }
 
+    function selectThis(event) {
+        const myCheckbox = document.getElementsByName("category");
+        if (event.target.checked === true) {
+            Array.prototype.forEach.call(myCheckbox, function (el) {
+                el.checked = false;
+            });
+            event.target.checked = true;
+        }
+    }
 
     CountPage(count)
 
     function Filtering(event) {
         const search_query = searchRef.current.value
-        const checkedCategories = checkCategories
+        let checkedCategories = checkCategories
+
+
+        // if (event.target.name === 'category') {
+        //     if (event.target.checked) {
+        //         setCheckCategories([...checkCategories, event.target.value])
+        //         checkedCategories.push(event.target.value)
+        //     } else if (event.target.checked === false) {
+        //         checkedCategories.splice(checkedCategories.indexOf(event.target.value), 1)
+        //         setCheckCategories([...checkedCategories])
+        //     }
+        // }
 
 
         if (event.target.name === 'category') {
             if (event.target.checked) {
-                setCheckCategories([...checkCategories, event.target.value])
-                checkedCategories.push(event.target.value)
+                // setCheckCategories([...checkCategories, event.target.value])
+                setCheckCategories([event.target.value])
+                checkedCategories = [event.target.value]
             } else if (event.target.checked === false) {
-                checkedCategories.splice(checkedCategories.indexOf(event.target.value), 1)
-                setCheckCategories([...checkedCategories])
+                checkedCategories = []
+                setCheckCategories([])
             }
         }
 
@@ -99,7 +120,7 @@ function App(props) {
                             {categories ? categories.map((item, index) => <div key={index}
                                                                                className="category-list form-check">
                                 <input className="form-check-input" name={'category'} type="checkbox"
-                                       value={item} id={'category' + index}/>
+                                       value={item} id={'category' + index} onChange={(event) => selectThis(event)}/>
                                 <label className="form-check-label" htmlFor={'category' + index}>
                                     {item}
                                 </label>
@@ -112,14 +133,18 @@ function App(props) {
                 </div>
             </div>
             {page.length !== 1 ?
-            <div className="pagination">
-                <span className={pageNum===page[0] ? 'prev-pagination pgn-btn disabled' : 'prev-pagination pgn-btn'} onClick={()=>changePage(pageNum-1)}/>
-            {page.length > 0? page.map((item, index) =>
-                <span onClick={() => changePage(item)} key={index}>
+                <div className="pagination">
+                    <span
+                        className={pageNum === page[0] ? 'prev-pagination pgn-btn disabled' : 'prev-pagination pgn-btn'}
+                        onClick={() => changePage(pageNum - 1)}/>
+                    {page.length > 0 ? page.map((item, index) =>
+                        <span onClick={() => changePage(item)} key={index}>
                     <span className={pageNum === parseInt(item) ? 'active' : ''}>{item + 1}</span>
                 </span>) : ''}
-                <span className={pageNum===page.length-1 ? 'next-pagination pgn-btn disabled' : 'next-pagination pgn-btn'} onClick={()=>changePage(pageNum+1)}/>
-            </div>:''}
+                    <span
+                        className={pageNum === page.length - 1 ? 'next-pagination pgn-btn disabled' : 'next-pagination pgn-btn'}
+                        onClick={() => changePage(pageNum + 1)}/>
+                </div> : ''}
         </div>
     </div>
 }

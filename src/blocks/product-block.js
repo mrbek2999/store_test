@@ -26,9 +26,11 @@ function ProductBlock(props) {
 
     useEffect(() => {
         if (props.filteringData !== '') {
-            props.getFilteringProducts(props.filteringData)
+            let filteringData = props.filteringData
+            filteringData += '&'+pageoffset
+            props.getFilteringProducts(filteringData)
         }
-    }, [props.filteringData])
+    }, [props.filteringData, offset])
 
     const {products, filteringProducts} = props.product
 
